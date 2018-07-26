@@ -21,6 +21,7 @@
 #include <linux/leds.h>
 #include <linux/qpnp/pwm.h>
 #include <linux/err.h>
+#include <linux/display_state.h>
 #include <linux/string.h>
 
 #include "mdss_dsi.h"
@@ -36,6 +37,12 @@
 #define VSYNC_DELAY msecs_to_jiffies(17)
 
 DEFINE_LED_TRIGGER(bl_led_trigger);
+bool display_on = true;
+
+bool is_display_on()
+{
+	return display_on;
+}
 
 static char g_lcd_id[MDSS_MAX_PANEL_LEN];
 
@@ -1055,6 +1062,8 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 		return -EINVAL;
 	}
 
+    display_on = true;
+		
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
@@ -1202,10 +1211,13 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 			goto end;
 	}
 
-	if (ctrl->off_cmds.cmd_cnt)
-		mdss_dsi_panel_cmds_send(ctrl, &ctrl->off_cmds, CMD_REQ_COMMIT);
+	if (ctrl->ds_registered && pinfo->is_pluggable) {
+		mdss_dba_utils_video_off(pinfo->dba_data);
+		mdss_dba_utils_hdcp_enable(pinfo->dba_data, false);
+		mdss_dsi_panel_off_hdmi(ctrl, pinfo);
+	}
 
-	mdss_dsi_panel_off_hdmi(ctrl, pinfo);
+	display_on = false;
 
 end:
 	/* clear idle state */
