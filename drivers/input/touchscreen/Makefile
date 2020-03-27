@@ -109,4 +109,5 @@ obj-$(CONFIG_TOUCHSCREEN_HIMAX_CHIPSET)	+= hxchipset/
 obj-$(CONFIG_TOUCHSCREEN_EKTF3XXX_CHIPSET) += ektf3xxx/
 obj-$(CONFIG_TOUCHSCREEN_GT9XX)		+= gt9xx/
 obj-$(CONFIG_TOUCHSCREEN_FT5446)	+= ft5446/
+obj-y	+=lct_tp_fm_info.o
 obj-$(CONFIG_VITURALSAR)		+= vituralsar_driver.o
