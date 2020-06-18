@@ -23,3 +23,4 @@ jobs:
            cd AnyKernel3
            zip -r9 $ZIPNAME * -x .git README.md *placeholder
            curl -F chat_id=$CHAT_ID -F document=@$ZIPNAME -F parse_mode=markdown https://api.telegram.org/bot"$BOT_API_TOKEN"/sendDocument
+
